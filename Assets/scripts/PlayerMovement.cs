@@ -71,6 +71,11 @@ public class PlayerMovement : MonoBehaviour
 
         playerControls.Player.Sprint.canceled += ctx => isSprinting = false;
 
+
+        playerControls.Player.Sad.performed += ctx => PlaySad();
+        playerControls.Player.Happy.performed += ctx => PlayHappy();
+        playerControls.Player.Dance.performed += ctx => PlayDance();
+
     }
 
  
@@ -185,6 +190,20 @@ public class PlayerMovement : MonoBehaviour
 
         animator.SetFloat("Speed", targetAnimationSpeed, speedDampTime, Time.deltaTime);
 
+    }
+    void PlaySad()
+    {
+        animator.SetTrigger("Sad");
+    }
+
+    void PlayHappy()
+    {
+        animator.SetTrigger("Happy");
+    }
+
+    void PlayDance()
+    {
+        animator.SetTrigger("Dance");
     }
 
 }
