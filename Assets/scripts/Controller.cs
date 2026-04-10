@@ -4,16 +4,21 @@ using UnityEngine;
 public class Controller : MonoBehaviour
 {
     [Header("Hareket Ayarları")]
-    public float speed = 5f;
+    public float walkSpeed = 5f;
+    public float runSpeed = 8f; 
     public float jumpForce = 5f;
     public float mouseSensitivty = 200f;
     public Transform cameraPivot;
     
     [Header("Zemin Kontrolü (Ground Check)")]
-    public Transform groundCheck; // Karakterin ayaklarındaki boş obje
-    public float groundDistance = 0.2f; // Zemin kontrol küresinin yarıçapı
-    public LayerMask groundMask; // Hangi katmanların "Zemin" sayılacağı
-    private bool isGrounded; // Yerde miyiz?
+    public Transform groundCheck; 
+    public float groundDistance = 0.2f; 
+    public LayerMask groundMask; 
+    private bool isGrounded; 
+
+    [Header("Animasyon Ayarları")]
+    public Animator animator; 
+    public KeyCode sprintKey = KeyCode.LeftShift; 
 
     private Rigidbody rb;
     private float xRotation = 0f;
@@ -26,6 +31,8 @@ public class Controller : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         jumpEffect = GetComponent<JumpEffect>(); 
+
+        if (animator == null) animator = GetComponentInChildren<Animator>();
         
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -38,22 +45,38 @@ public class Controller : MonoBehaviour
 
     void Update()
     {
-        // 1. Önce yerde miyiz onu kontrol et
         CheckIfGrounded();
         
-        // 2. Hareket, zıplama ve yere düşme efektini çalıştır
-        Move();
+        MoveAndAnimate(); 
         Jump();
         CheckLandingEffect(); 
+        
+        // Düşme ve zıplama geçişleri için dikey hızı ve yer bilgisini Animator'a gönderiyoruz
+        if (animator != null)
+        {
+            animator.SetFloat("YVelocity", rb.linearVelocity.y);
+            animator.SetBool("IsGrounded", isGrounded);
+        }
     }
 
-    void Move()
+    void MoveAndAnimate()
     {
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
+        
+        bool isRunning = Input.GetKey(sprintKey);
+        float currentSpeed = isRunning ? runSpeed : walkSpeed;
+
         Vector3 move = transform.right * horizontal + transform.forward * vertical;
-        Vector3 movement = move * speed * Time.deltaTime;
+        Vector3 movement = move * currentSpeed * Time.deltaTime;
         rb.MovePosition(transform.position + movement);
+
+        if (animator != null)
+        {
+            float animSpeedMultiplier = isRunning ? 2f : 1f; 
+            animator.SetFloat("X", horizontal * animSpeedMultiplier, 0.1f, Time.deltaTime);
+            animator.SetFloat("Y", vertical * animSpeedMultiplier, 0.1f, Time.deltaTime);
+        }
     }
 
     void MouseLook()
@@ -70,37 +93,33 @@ public class Controller : MonoBehaviour
 
     void CheckIfGrounded()
     {
-        // Karakterin ayaklarında yarattığımız noktanın etrafında bir küre oluşturur.
-        // Bu küre "groundMask" olarak belirlediğimiz katmanlardan birine değiyorsa "true" döner.
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
     }
 
     void Jump()
     {
-        // Artık hıza değil, sanal küremizin yere değip değmediğine (isGrounded) bakıyoruz
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
 
-            if (jumpEffect != null)
-            {
-                jumpEffect.PlayJumpStretch();
-            }
+            if (jumpEffect != null) jumpEffect.PlayJumpStretch();
+
+            if (animator != null) animator.SetTrigger("Jump");
         }
     }
 
     void CheckLandingEffect()
     {
-        // Eğer geçen karede havadaysak ve ŞU AN yerdeysek (CheckSphere sayesinde kesin biliyoruz)
+        // Karakter havadan yere TIK diye çarptığı an
         if (wasInAir && isGrounded)
         {
-            if (jumpEffect != null)
-            {
-                jumpEffect.PlayLandSquash();
-            }
+            // 1. Görsel ezilme efektini çalıştır
+            if (jumpEffect != null) jumpEffect.PlayLandSquash();
+
+            // 2. Animator'a "Yere İndik (Land)" tetikleyicisini gönder
+            if (animator != null) animator.SetTrigger("Land");
         }
 
-        // Bir sonraki kare için havada olma durumumuzu güncelliyoruz.
         wasInAir = !isGrounded; 
     }
 }
