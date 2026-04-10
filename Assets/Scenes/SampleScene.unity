@@ -131367,6 +131367,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -2356915838762956452, guid: 33157aebfb90a114ba3def0b4d9c01fc, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 33157aebfb90a114ba3def0b4d9c01fc, type: 3}
       propertyPath: m_Name
       value: Ch19_nonPBR@Dancing
@@ -244952,6 +244956,11 @@ MonoBehaviour:
   jumpForce: 10
   mouseSensitivty: 500
   cameraPivot: {fileID: 1087733423}
+  groundCheck: {fileID: 0}
+  groundDistance: 0.2
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!43 &2114429969
 Mesh:
   m_ObjectHideFlags: 0

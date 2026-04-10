@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 0fdf2fd8f47d94141adda35bda6de7ad
+guid: 10f3bc4567df0fc4e9a52c45ea63db84
 ScriptedImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -8,3 +8,11 @@ ScriptedImporter:
   assetBundleName: 
   assetBundleVariant: 
   script: {fileID: 11500000, guid: 625f186215c104763be7675aa2d941aa, type: 3}
+  useAsTemplate: 0
+  exposeTemplateAsShader: 0
+  template:
+    name: 
+    category: 
+    description: 
+    icon: {instanceID: 0}
+    thumbnail: {instanceID: 0}
