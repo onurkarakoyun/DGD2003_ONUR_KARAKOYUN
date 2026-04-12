@@ -3260,6 +3260,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2529086372104787911, guid: 1691d6ecddae884429fc035a3c4f3663, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2785125556250576992, guid: 1691d6ecddae884429fc035a3c4f3663, type: 3}
       propertyPath: m_LocalPosition.x
       value: -19.90048
@@ -3304,6 +3308,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Computer
       objectReference: {fileID: 0}
+    - target: {fileID: 3331381608385295484, guid: 1691d6ecddae884429fc035a3c4f3663, type: 3}
+      propertyPath: m_CullTransparentMesh
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4125864116728646530, guid: 1691d6ecddae884429fc035a3c4f3663, type: 3}
       propertyPath: OnFixed.m_PersistentCalls.m_Calls.Array.size
       value: 0
@@ -3332,9 +3340,21 @@ PrefabInstance:
       propertyPath: OnFixed.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
+    - target: {fileID: 4140944235016121388, guid: 1691d6ecddae884429fc035a3c4f3663, type: 3}
+      propertyPath: m_CullTransparentMesh
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6833236184754323420, guid: 1691d6ecddae884429fc035a3c4f3663, type: 3}
+      propertyPath: m_CullTransparentMesh
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8234964852940767885, guid: 1691d6ecddae884429fc035a3c4f3663, type: 3}
       propertyPath: m_Camera
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8234964852940767885, guid: 1691d6ecddae884429fc035a3c4f3663, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
