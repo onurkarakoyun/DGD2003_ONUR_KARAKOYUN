@@ -6,10 +6,14 @@ public class Controller : MonoBehaviour
     [Header("Hareket Ayarları")]
     public float walkSpeed = 5f;
     public float runSpeed = 8f; 
-    public float jumpForce = 5f;
     public float mouseSensitivty = 200f;
     public Transform cameraPivot;
     
+    [Header("Zıplama Ayarları")]
+    public float jumpForce = 5f;
+    public int maxJumps = 2; 
+    private int jumpCount = 0; 
+
     [Header("Zemin Kontrolü (Ground Check)")]
     public Transform groundCheck; 
     public float groundDistance = 0.2f; 
@@ -23,7 +27,6 @@ public class Controller : MonoBehaviour
     private Rigidbody rb;
     private float xRotation = 0f;
 
-    // Efekt değişkenleri
     private JumpEffect jumpEffect; 
     private bool wasInAir = false; 
 
@@ -51,7 +54,6 @@ public class Controller : MonoBehaviour
         Jump();
         CheckLandingEffect(); 
         
-        // Düşme ve zıplama geçişleri için dikey hızı ve yer bilgisini Animator'a gönderiyoruz
         if (animator != null)
         {
             animator.SetFloat("YVelocity", rb.linearVelocity.y);
@@ -94,30 +96,46 @@ public class Controller : MonoBehaviour
     void CheckIfGrounded()
     {
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
+
+        if (isGrounded)
+        {
+            jumpCount = 0;
+        }
     }
 
     void Jump()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+        if (Input.GetKeyDown(KeyCode.Space) && (isGrounded || jumpCount < maxJumps))
         {
+            if (!isGrounded)
+            {
+                rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+            }
+
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            jumpCount++; 
 
             if (jumpEffect != null) jumpEffect.PlayJumpStretch();
 
-            if (animator != null) animator.SetTrigger("Jump");
+            if (animator != null) 
+            {
+                animator.SetTrigger("Jump");
+            }
         }
     }
 
     void CheckLandingEffect()
     {
-        // Karakter havadan yere TIK diye çarptığı an
         if (wasInAir && isGrounded)
         {
-            // 1. Görsel ezilme efektini çalıştır
             if (jumpEffect != null) jumpEffect.PlayLandSquash();
-
-            // 2. Animator'a "Yere İndik (Land)" tetikleyicisini gönder
-            if (animator != null) animator.SetTrigger("Land");
+            
+            if (animator != null) 
+            {
+                // ÇÖZÜM BURADA: Yere değdiğimiz an, önceden basılmış ama çalışmamış zıplama komutlarını siliyoruz.
+                animator.ResetTrigger("Jump"); 
+                animator.SetTrigger("Land");
+            }
         }
 
         wasInAir = !isGrounded; 
