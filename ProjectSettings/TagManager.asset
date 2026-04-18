@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Key
   - Door
+  - Fuse
+  - Panel
   layers:
   - Default
   - TransparentFX
