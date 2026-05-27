@@ -4918,12 +4918,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3edc9303a12ba1b4f9f6742c7470c338, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2183955463603904724}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3edc9303a12ba1b4f9f6742c7470c338, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: -928418400185199826}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3edc9303a12ba1b4f9f6742c7470c338, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2162685874126671084}
   m_SourcePrefab: {fileID: 100100000, guid: 3edc9303a12ba1b4f9f6742c7470c338, type: 3}
 --- !u!4 &63951820125647321 stripped
 Transform:
@@ -4956,33 +4950,3 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.017398426, y: 0.0042111664, z: 0.04197657}
   m_Center: {x: 0.008699228, y: 4.5821397e-10, z: 0.020988286}
---- !u!114 &-928418400185199826
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 840171451882695523}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e62461cdd42c275428bfbb66ce67f147, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  doorID: 1
-  openSpeed: 2
-  doorOpenVFX: {fileID: 5284867895047823859}
---- !u!114 &2162685874126671084
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 840171451882695523}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e62461cdd42c275428bfbb66ce67f147, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  doorID: 1
-  openSpeed: 2
-  doorOpenVFX: {fileID: 5284867895047823859}

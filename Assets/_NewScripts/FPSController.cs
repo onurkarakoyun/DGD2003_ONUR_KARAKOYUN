@@ -21,6 +21,7 @@ public class FPSController : MonoBehaviour
         
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        mouseSensitivity = PlayerPrefs.GetFloat("MouseSensitivity", 2f);
     }
 
     void Update()

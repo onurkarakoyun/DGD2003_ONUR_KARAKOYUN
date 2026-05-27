@@ -5,7 +5,7 @@ public class ElectricalPanel : MonoBehaviour
 {
     [Header("Pano Ayarları")]
     public int requiredFuses = 3;
-    private int currentFuses = 0;
+    public int currentFuses = 0;
     private bool isPowerOn = false;
 
     [Header("Okul Işıkları")]
