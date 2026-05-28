@@ -1,13 +1,16 @@
 using UnityEngine;
-using System.IO; // Dosya okuma/yazma işlemleri için şart
+using System.IO; 
+using System.Collections.Generic; // YENİ: Liste (List) kullanabilmek için gerekli!
 
-// Kaydedilecek verilerin şablonunu oluşturuyoruz.
-// System.Serializable olmazsa JSON'a çevrilememez!
 [System.Serializable]
 public class GameData
 {
     public Vector3 playerPosition;
     public int collectedFuses;
+    public int collectedKeys;
+    
+    // YENİ: Alınan objelerin kimliklerini tutan liste
+    public List<string> collectedItemIDs = new List<string>(); 
 }
 
 public class SaveManager : MonoBehaviour
@@ -17,62 +20,106 @@ public class SaveManager : MonoBehaviour
     public ElectricalPanel electricalPanel;
 
     private string saveFilePath;
+    private int currentSlot;
+
+    // YENİ: Oyun sırasında toplanan objelerin anlık listesi
+    public List<string> currentCollectedItems = new List<string>();
 
     void Start()
     {
-        // Kayıt dosyasının bilgisayardaki gizli/güvenli yerini belirliyoruz (AppData klasörü)
-        saveFilePath = Application.persistentDataPath + "/saveData.json";
+        currentSlot = PlayerPrefs.GetInt("CurrentSaveSlot", 1);
+        saveFilePath = Application.persistentDataPath + "/saveData_" + currentSlot + ".json";
+
+        int isNewGame = PlayerPrefs.GetInt("IsNewGame", 0);
+
+        if (isNewGame == 1)
+        {
+            Debug.Log("YENİ OYUN BAŞLADI! Eski kayıt siliniyor...");
+            if (File.Exists(saveFilePath)) File.Delete(saveFilePath);
+        }
+        else
+        {
+            if (File.Exists(saveFilePath)) LoadGame();
+        }
     }
 
-    void Update()
+    // YENİ: Objeler alındıkça bu fonksiyon çalışıp onları listeye ekler
+    public void RegisterCollectedItem(string objectID)
     {
-        // Hızlı test için: F5 Kaydet, F9 Yükle
-        if (Input.GetKeyDown(KeyCode.F5)) SaveGame();
-        if (Input.GetKeyDown(KeyCode.F9)) LoadGame();
+        // Eğer bu ID listede yoksa ekle (Çift eklemeyi önler)
+        if (!currentCollectedItems.Contains(objectID))
+        {
+            currentCollectedItems.Add(objectID);
+        }
     }
 
     public void SaveGame()
     {
-        // Şablondan yeni bir veri paketi oluştur ve içini doldur
         GameData data = new GameData();
         data.playerPosition = playerTransform.position;
-        data.collectedFuses = electricalPanel.currentFuses; // Kaç sigorta toplandığını al
+        data.collectedFuses = electricalPanel.currentFuses; 
 
-        // Veriyi JSON formatında bir metne çevir (true parametresi kodun okunabilir alt alta yazılmasını sağlar)
+        GameUIManager uiManager = GetComponent<GameUIManager>();
+        if (uiManager != null) data.collectedKeys = uiManager.collectedKeys; 
+
+        // Listeyi pakete koy
+        data.collectedItemIDs = currentCollectedItems;
+
         string jsonText = JsonUtility.ToJson(data, true); 
-        
-        // Metni dosyaya yaz
         File.WriteAllText(saveFilePath, jsonText); 
 
-        Debug.Log("Oyun JSON ile Kaydedildi! Dosya Yolu: " + saveFilePath);
+        Debug.Log("Oyun Kaydedildi! Alınan obje sayısı: " + data.collectedItemIDs.Count);
     }
 
     public void LoadGame()
     {
-        // Dosya gerçekten var mı diye kontrol et
         if (File.Exists(saveFilePath))
         {
-            // Dosyadaki metni oku
             string jsonText = File.ReadAllText(saveFilePath);
-            
-            // Metni tekrar bizim GameData sınıfımıza çevir
             GameData data = JsonUtility.FromJson<GameData>(jsonText);
 
-            // 1. OYUNCU POZİSYONUNU YÜKLE
-            // CharacterController varken pozisyonu direkt değiştirmek bug yapabilir, bu yüzden anlık kapatıp açıyoruz.
             CharacterController cc = playerTransform.GetComponent<CharacterController>();
             if (cc != null) cc.enabled = false;
             playerTransform.position = data.playerPosition;
             if (cc != null) cc.enabled = true;
 
-            // 2. SİGORTA SAYISINI YÜKLE
             electricalPanel.currentFuses = data.collectedFuses;
 
-            Debug.Log("Oyun JSON'dan Yüklendi! Sigorta: " + data.collectedFuses);
+            GameUIManager uiManager = GetComponent<GameUIManager>();
+            if (uiManager != null) uiManager.LoadDataToUI(data.collectedFuses, data.collectedKeys); 
+
+            // Kayıtlı listeyi mevcut listemize eşitle
+            currentCollectedItems = data.collectedItemIDs;
+
+            // YENİ: SAHNEDEKİ ALINMIŞ OBJELERİ YOK ETME İŞLEMİ
+            DestroyCollectedObjects();
+
+            Debug.Log("Oyun Yüklendi! Silinen obje sayısı: " + currentCollectedItems.Count);
         }
-        else
+    }
+
+    private void DestroyCollectedObjects()
+    {
+        // Sahnedeki tüm Anahtarları bul
+        KeyPickup[] allKeys = Object.FindObjectsOfType<KeyPickup>();
+        foreach (KeyPickup key in allKeys)
         {
-            Debug.LogWarning("Kayıt dosyası bulunamadı!");
+            // Eğer bu anahtarın ID'si alınmışlar listesinde varsa, onu sahneden sil!
+            if (currentCollectedItems.Contains(key.objectID))
+            {
+                Destroy(key.gameObject);
+            }
+        }
+
+        // Sahnedeki tüm Sigortaları bul
+        FusePickup[] allFuses = FindObjectsOfType<FusePickup>();
+        foreach (FusePickup fuse in allFuses)
+        {
+            // Eğer bu sigortanın ID'si alınmışlar listesinde varsa, onu sahneden sil!
+            if (currentCollectedItems.Contains(fuse.objectID))
+            {
+                Destroy(fuse.gameObject);
+            }
         }
     }
 }

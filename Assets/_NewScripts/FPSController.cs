@@ -26,6 +26,7 @@ public class FPSController : MonoBehaviour
 
     void Update()
     {
+        if (Time.timeScale == 0f) return;
         HandleMouseLook();
         HandleMovement();
     }

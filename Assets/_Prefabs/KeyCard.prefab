@@ -122,3 +122,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KeyPickup
   keyID: 5
+  objectID: Keycard_Exit
