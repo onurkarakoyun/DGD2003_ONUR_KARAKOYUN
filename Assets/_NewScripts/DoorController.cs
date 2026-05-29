@@ -46,11 +46,7 @@ public class DoorController : MonoBehaviour
                 doorOpenVFX.Play();
             }
 
-            CameraManager camManager = Object.FindFirstObjectByType<CameraManager>();
-            if (camManager != null && doorID == 2)
-            {
-                camManager.ActivateExitCamera();
-            }
+            
         }
     }
 

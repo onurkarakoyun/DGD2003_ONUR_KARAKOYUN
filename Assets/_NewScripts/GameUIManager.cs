@@ -50,7 +50,7 @@ public class GameUIManager : MonoBehaviour
 
     private void UpdateUITexts()
     {
-        if (fuseText != null) fuseText.text = "Sigorta: " + collectedFuses + "/3";
-        if (keyText != null) keyText.text = "Anahtar: " + collectedKeys;
+        if (fuseText != null) fuseText.text = "Fuse: " + collectedFuses + "/3";
+        if (keyText != null) keyText.text = "Key: " + collectedKeys;
     }
 }

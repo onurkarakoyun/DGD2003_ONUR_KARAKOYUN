@@ -32,7 +32,7 @@ public class PlayerInteract : MonoBehaviour
             GameObject hitObject = hit.collider.gameObject;
 
             // Eğer baktığımız şey etkileşimliyse
-            if (hitObject.CompareTag("Key") || hitObject.CompareTag("Door") || hitObject.CompareTag("Fuse") || hitObject.CompareTag("Panel"))
+            if (hitObject.CompareTag("Key") || hitObject.CompareTag("Door") || hitObject.CompareTag("Fuse") || hitObject.CompareTag("Panel") || hitObject.CompareTag("Elevator"))
             {
                 // Eğer farklı yeni bir objeye bakmaya başladıysak
                 if (currentTarget != hitObject)
@@ -71,6 +71,11 @@ public class PlayerInteract : MonoBehaviour
         {
             ElectricalPanel panel = currentTarget.GetComponent<ElectricalPanel>();
             if (panel != null) panel.Interact();
+        }
+        else if (currentTarget.CompareTag("Elevator"))
+        {
+            ElevatorController elevator = currentTarget.GetComponent<ElevatorController>();
+            if (elevator != null) elevator.Interact();
         }
         
         // Eşya alındıktan sonra yok olacağı için UI'ı ve hedefi temizle

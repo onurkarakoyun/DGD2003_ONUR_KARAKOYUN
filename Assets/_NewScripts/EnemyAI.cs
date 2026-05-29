@@ -7,12 +7,16 @@ public class EnemyAI : MonoBehaviour
 {
     [Header("Oyuncu ve Menzil Ayarları")]
     public Transform player;
-    public float chaseRange = 10f; // Oyuncuyu ne kadar yakından fark edeceği
+    public float chaseRange = 10f;
+    public float catchRange = 1.5f; // Oyuncuyu ne kadar yakından fark edeceği
 
     [Header("Devriye Ayarları")]
     // Düşmanın gezeceği noktaların listesi
     public Transform[] patrolPoints; 
     private int currentPatrolIndex = 0;
+
+    [Header("Animasyon")]
+    public Animator enemyAnimator;
 
     private NavMeshAgent agent;
 
@@ -26,22 +30,32 @@ public class EnemyAI : MonoBehaviour
 
     void Update()
     {
-        // 1. Oyuncu ile düşman arasındaki mesafeyi matematiksel olarak ölç
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
-        // 2. Eğer oyuncu fark edilme menzilinin içindeyse (CHASE - KOVALAMA DURUMU)
-        if (distanceToPlayer <= chaseRange)
+        if (distanceToPlayer <= catchRange)
         {
-            // Ajanın hedefini oyuncunun anlık pozisyonu yap
-            agent.SetDestination(player.position);
+            GameOverManager gameOverManager = Object.FindFirstObjectByType<GameOverManager>();
+            if (gameOverManager != null) gameOverManager.ShowGameOver();
+            return; 
         }
-        // 3. Eğer oyuncu uzaktaysa (PATROL - DEVRİYE DURUMU)
+        else if (distanceToPlayer <= chaseRange)
+        {
+            // KOVALAMA DURUMU
+            agent.SetDestination(player.position);
+            
+            // YENİ: Koşma animasyonunu başlat
+            if (enemyAnimator != null) enemyAnimator.SetBool("isChasing", true); 
+        }
         else
         {
-            // Eğer ajan mevcut hedefine çok yaklaştıysa ve yeni yol hesaplamıyorsa
+            // DEVRİYE (YÜRÜME) DURUMU
+            
+            // YENİ: Koşmayı bırak, yürümeye dön
+            if (enemyAnimator != null) enemyAnimator.SetBool("isChasing", false); 
+
             if (!agent.pathPending && agent.remainingDistance < 0.5f)
             {
-                GoToNextPatrolPoint(); // Sıradaki noktaya ilerle
+                GoToNextPatrolPoint(); 
             }
         }
     }

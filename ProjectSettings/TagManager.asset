@@ -8,6 +8,7 @@ TagManager:
   - Door
   - Fuse
   - Panel
+  - Elevator
   layers:
   - Default
   - TransparentFX
